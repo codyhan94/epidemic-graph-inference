@@ -9,7 +9,7 @@ import networkx as nx
 class SISim(BaseSim):
     """Base class for network inference simulations."""
 
-    def __init__(self, graph_file, n_cascades, mu=0.1):
+    def __init__(self, graph_file, n_cascades=1, mu=0.1):
         """Set up a
         """
         self.G = nx.read_graphml(graph_file)
@@ -20,7 +20,11 @@ class SISim(BaseSim):
         pass
 
     def initialize_graph(self):
-        """Set up the graph.."""
+        """Set up the graph, using random edge weights for now. """
+        for n, nbrdict in self.G.adjacency_iter():
+            for nbr, eattr in nbrdict.iteritems():
+                if 'weight' not in eattr:
+                    eattr['weight'] = random.random()
         return
 
     def step(self):
