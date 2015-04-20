@@ -1,15 +1,16 @@
 import networkx as nx
 
 class BaseGraph(object):
-    """ Base graph structure 
+    """ Base graph structure
 
     Default assumes networkx libraries for generation and usage. If you
     plan on using other libraries, overwrite all of the functions you need
 
     """
-    G = None                # graph itself
-    graph_type = None       # type of graph
-    directed = False        #  
+    # The networkx graph this wraps around.
+    G = None
+    graph_type = None
+    directed = False
     edge_weighted = False
     node_weighted = False
 
@@ -35,7 +36,7 @@ class BaseGraph(object):
         The Laplacian matrix is defined as L = D - A where D contains the
         outbound degree of a node and A is -1 if there is an edge from i to j.
 
-        Returns: 
+        Returns:
             SciPy sparse matrix
         """
         pass

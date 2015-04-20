@@ -9,5 +9,5 @@ class GNPgraph(BaseGraph):
         super(GNPgraph, self).__init__()
         self.arg = arg
 
-    def generate(self, n = 1000, p = .5, directed = False):
-    	self.G = nx.fast_gnp_random_graph(n, p, None, directed)
+    def generate(self, n=1000, p=.5, directed=False):
+        self.G = nx.fast_gnp_random_graph(n, p, None, directed)
