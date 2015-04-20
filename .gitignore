@@ -60,7 +60,7 @@ docs/_build/
 target/
 
 # Sublime text
-*.sublime-project
+# *.sublime-project
 *.sublime-workspace
 
 # PyCharm/JetBrains IDEs
