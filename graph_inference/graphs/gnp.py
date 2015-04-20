@@ -12,9 +12,14 @@ class GNPgraph(BaseGraph):
     def __init__(self, arg):
         super(GNPgraph, self).__init__()
         self.arg = arg
+        self.edge_weighted = False
+        self.node_weighted = False
+        self.graph_type = "GNP"
+        self.directed = False
 
     def generate(self, n=1000, p=.5, directed=False):
         self.G = nx.fast_gnp_random_graph(n, p, None, directed)
+        self.directed = directed
 
 if __name__ == "__main__":
     """ Example code """
