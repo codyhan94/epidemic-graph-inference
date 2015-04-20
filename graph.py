@@ -1,7 +1,7 @@
 import networkx
 
 
-class neograph:
+class _basegraph:
     graphtype = None
     directed = False
     edgeweighted = False
