@@ -1,16 +1,33 @@
-import networkx
+import networkx as nx
 
 class BaseGraph(object):
-    graph_type = None
-    directed = False
+    """ Base graph structure 
+
+    Default assumes networkx libraries for generation and usage. If you
+    plan on using other libraries, overwrite all of the functions you need
+
+    """
+    G = None                # graph itself
+    graph_type = None       # type of graph
+    directed = False        #  
     edge_weighted = False
     node_weighted = False
 
     def __init__(self):
         self.generate()
 
-    def generate():
-        pass
+    def generate(self):
+        """ Generates an empty networkx graph """
+        self.G = nx.Graph()
+
+    def graphml(self, path):
+        """ Generates a graphml file for the graph
+
+        Args:
+            path: a path to the file you want to write to
+        """
+
+        nx.readwrite.write_graphml(self.G, path)
 
     def laplacian(self):
         """Returns the Laplacian matrix.
@@ -18,7 +35,8 @@ class BaseGraph(object):
         The Laplacian matrix is defined as L = D - A where D contains the
         outbound degree of a node and A is -1 if there is an edge from i to j.
 
-        :returns: Nothing.
+        Returns: 
+            SciPy sparse matrix
         """
         pass
 
@@ -30,7 +48,8 @@ class BaseGraph(object):
 
         :returns: BaseGraph
         """
-        pass
+
+        return self.G.nodes()
 
     def adjacencyMatrix(self):
         """
