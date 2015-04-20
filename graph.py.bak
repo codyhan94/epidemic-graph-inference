@@ -1,0 +1,11 @@
+
+class Sim(object):
+    # TODO: The basic graph functionality that we want:
+    #
+    #   init - get the graph set up
+    #   step - run a step of the simulation
+    #   result - get the resulting infection time vector
+    #
+    # Extend from the base sim class for other simulation models.
+    def __init__(self):
+        pass

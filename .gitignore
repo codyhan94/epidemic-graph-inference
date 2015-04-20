@@ -51,7 +51,10 @@ coverage.xml
 *.log
 
 # Sphinx documentation
+build/*
 docs/_build/
+*.rst
+!index.rst
 
 # PyBuilder
 target/
@@ -59,3 +62,6 @@ target/
 # Sublime text
 *.sublime-project
 *.sublime-workspace
+
+# PyCharm/JetBrains IDEs
+.idea/*
