@@ -15,7 +15,7 @@ class BaseGraph(object):
     node_weighted = False
 
     def __init__(self):
-        self.generate()
+        pass
 
     def generate(self):
         """ Generates an empty networkx graph """
