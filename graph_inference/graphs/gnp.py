@@ -9,9 +9,8 @@ import sys
 class GNPgraph(BaseGraph):
     """Generates a GNP graph."""
 
-    def __init__(self, arg):
+    def __init__(self):
         super(GNPgraph, self).__init__()
-        self.arg = arg
         self.edge_weighted = False
         self.node_weighted = False
         self.graph_type = "GNP"
