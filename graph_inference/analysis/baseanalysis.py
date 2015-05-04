@@ -1,5 +1,4 @@
 from __future__ import print_function
-
 import networkx as nx
 
 
@@ -9,7 +8,7 @@ class BaseAnalysis(object):
     G = None
     H = None
 
-    def ___init___(self, graphfile, inferredfile):
+    def __init__(self, graphfile, inferredfile):
         self.G = nx.readwrite.graphml.read_graphml(graphfile)
         self.H = nx.readwrite.graphml.read_graphml(inferredfile)
 
@@ -31,7 +30,7 @@ class BaseAnalysis(object):
         count = 0
         for gedge in gedges:
             if gedge not in hedges:
-                count += 0
+                count += 1
         return count
 
     def edgeextra(self, G=None, H=None):
@@ -55,7 +54,7 @@ class BaseAnalysis(object):
             G = self.G
         if H is None:
             H = self.H
-        return G.number_of_nodes() - H.number_of_nodes()
+        return G.number_of_edges() - H.number_of_edges()
 
     def neighbormatching(self, G=None, H=None):
         """ Returns the graph similarity based on Neighbor Matching[Ref]
@@ -99,9 +98,11 @@ class BaseAnalysis(object):
         if H is None:
             H = self.H
 
-        gdegree = nx.degree(G).sort(reversed=True)
-        hdegree = nx.degree(H).sort(reversed=True)
-        degreelist = map(self.__degreesequencehelper, gdegree, hdegree)
+        gdegree = sorted(nx.degree(G).values(), reverse=True)
+        hdegree = sorted(nx.degree(H).values(), reverse=True)
+
+        degreelist = [self.__degreesequencehelper(x, y) for x, y
+                      in zip(gdegree, hdegree)]
 
         return sum(degreelist) / len(degreelist)
 
@@ -118,17 +119,18 @@ class BaseAnalysis(object):
         if H is None:
             H = self.H
 
-        gdegree = nx.degree(G)
-        hdegree = nx.degree(H)
-        degreelist = map(self.__degreesequencehelper, gdegree, hdegree)
+        gdegree = nx.degree(G).values()
+        hdegree = nx.degree(H).values()
+        degreelist = [self.__degreesequencehelper(x, y) for x, y
+                      in zip(gdegree, hdegree)]
 
         return sum(degreelist) / len(degreelist)
 
     def __degreesequencehelper(self, i, j):
         """ Helper function for degree sequence """
-        if i is None:
+        if i is None or i == 0:
             return float(j)
-        elif j is None:
+        elif j is None or j == 0:
             return float(i)
         else:
             return float(abs(i - j)) / i
