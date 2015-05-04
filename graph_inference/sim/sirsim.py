@@ -32,7 +32,18 @@ class SIRSim(BaseSim):
         self.infection_times.fill(np.inf)
 
         self.mu = mu
-        self.DEBUG = True
+        self.DEBUG = False
+        self.initialize_graph()
+
+    def reset(self):
+        """
+        Resets the simulation so we can run multiple cascades.
+        """
+        self.infected.clear()
+        self.recovered.clear()
+        self.last_infected.clear()
+        self.t = 0
+        self.infection_times.fill(np.inf)
         self.initialize_graph()
 
     def load_graph(self, graph_file):
@@ -43,6 +54,8 @@ class SIRSim(BaseSim):
 
         Sets up the graph with a uniform random (0, 1) edge weight for each edge
         (u, v) and seeds each node with probability mu.
+
+        Note: only assigns a weight to an edge if it doesn't have one already.
         """
         for n, nbrdict in self.G.adjacency_iter():
             # Assign an edge weight to each edge.
@@ -93,6 +106,17 @@ class SIRSim(BaseSim):
 
         :return: numpy array
         """
-        while not self.stable():
-            self.step()
-        return self.infection_times
+        all_cascades = []
+
+        for _ in range(self.n_cascades):
+            # Run the entire simulation once (one cascade).
+            while not self.stable():
+                self.step()
+
+            # Store the results of simulation.
+            all_cascades.append(self.infection_times.copy())
+
+            # And prepare for another cascade.
+            self.reset()
+
+        return np.array(all_cascades)
