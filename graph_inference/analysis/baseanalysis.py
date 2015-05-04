@@ -41,6 +41,11 @@ class BaseAnalysis(object):
         :param H: networkx graph of inferred graph (default: self.H)
         :return: int
         """
+        if G is None:
+            G = self.G
+        if H is None:
+            H = self.H
+
         return self.edgeerror(H, G)
 
     def edgedifference(self, G=None, H=None):
