@@ -59,14 +59,18 @@ class GreedySolver(BaseSolver):
                 possible_infectors = np.where(cascade == cascade[node] - 1)[0]
 
                 # These cascades are going to be removed for the next iteration.
-                if np.any(possible_infectors):
+                # if np.any(possible_infectors):
+                if len(possible_infectors) > 0:
                     accounted_cascades.append(i)
                     potential_parents.update(possible_infectors)
 
+            # set_trace()
+
             # Add node that was infected one timestep before me in the
             # largest number of observed cascades to my parent neighborhood.
-            parent = potential_parents.most_common(1)[0][0]
-            parents.append(parent)
+            if potential_parents:
+                parent = potential_parents.most_common(1)[0][0]
+                parents.append(parent)
 
             # Remove all cascades where node j was infected one step before me.
             self.remaining_cascades[accounted_cascades] = False
