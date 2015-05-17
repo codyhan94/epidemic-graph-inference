@@ -1,4 +1,5 @@
 import networkx as nx
+import matplotlib.pyplot as plt
 
 class BaseGraph(object):
     """ Base graph structure
@@ -29,6 +30,12 @@ class BaseGraph(object):
         """
 
         nx.readwrite.write_graphml(self.G, path)
+
+    def draw(self):
+        """ shows the graph using pyplot/graphviz"""
+        nx.draw_graphviz(self.G)
+        plt.show()
+        pass
 
     def laplacian(self):
         """Returns the Laplacian matrix.

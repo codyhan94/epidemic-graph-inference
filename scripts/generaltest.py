@@ -5,8 +5,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import math
 
-import sys
-sys.path.append('.')
+import sys, os
+sys.path.append(os.getcwd())
 
 # CONSTANTS
 GENERATOR = "TREE"  # or "GNP"
