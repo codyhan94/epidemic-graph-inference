@@ -4,7 +4,12 @@ import numpy as np
 
 from graph_inference.solver.greedysolver import GreedySolver
 
+
 class TestGreedySolverMethods(unittest.TestCase):
+    """
+    Simple test cases for the functionality of the greedy algorithm.
+    """
+
     def setUp(self):
         pass
 
@@ -72,16 +77,15 @@ class TestGreedySolverMethods(unittest.TestCase):
              \ /
               2
         """
-
         # Two cascades with 0 as the seed, one where all nodes get infected
         # and one where only node 1 gets infected. Similarly, two cascades
         # with 1 as a seed, one where all nodes get infected and one where
-        # only 0 gets infected.
-        cascades = np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0], [0, 1, np.inf],
-            [1, 0, np.inf]])
+        # only 0 gets infected. Likewise for node 2, but with an imbalance.
+        cascades = np.array(
+            [[0, 1, 1], [0, 1, np.inf], [1, 0, 1], [1, 0, np.inf],
+             [1, 1, 0], [np.inf, 0, 1]])
         solver = GreedySolver(cascades)
 
         self.assertEqual(solver.solve_node(0), [1])
         self.assertEqual(solver.solve_node(1), [0])
-        # set_trace()
-        # solver.solve_node(2)
+        self.assertEqual(solver.solve_node(2), [1])

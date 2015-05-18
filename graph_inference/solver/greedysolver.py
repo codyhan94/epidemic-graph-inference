@@ -50,21 +50,22 @@ class GreedySolver(BaseSolver):
                     continue
                 cascade = self.cascades[i]
 
-                # This was a seed node, can't have anyone else infect it.
-                if cascade[node] == 0:
+                # This was a seed node or was never infected; can't have anyone
+                # else infect it.
+                if cascade[node] == 0 or np.isinf(cascade[node]):
                     accounted_cascades.append(i)
                     continue
 
                 # Nodes infected one timestep before me could have infected me.
-                possible_infectors = np.where(cascade == cascade[node] - 1)[0]
+                possible_infectors = np.where(
+                    (cascade == cascade[node] - 1) &
+                    (np.isfinite(cascade[node])))[0]
 
                 # These cascades are going to be removed for the next iteration.
                 # if np.any(possible_infectors):
                 if len(possible_infectors) > 0:
                     accounted_cascades.append(i)
                     potential_parents.update(possible_infectors)
-
-            # set_trace()
 
             # Add node that was infected one timestep before me in the
             # largest number of observed cascades to my parent neighborhood.
