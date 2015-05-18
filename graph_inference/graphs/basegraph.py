@@ -33,7 +33,7 @@ class BaseGraph(object):
 
     def draw(self):
         """ shows the graph using pyplot/graphviz"""
-        nx.draw_graphviz(self.G)
+        nx.draw(self.G)
         plt.show()
         pass
 
