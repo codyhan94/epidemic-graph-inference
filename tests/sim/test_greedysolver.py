@@ -81,11 +81,50 @@ class TestGreedySolverMethods(unittest.TestCase):
         # and one where only node 1 gets infected. Similarly, two cascades
         # with 1 as a seed, one where all nodes get infected and one where
         # only 0 gets infected. Likewise for node 2, but with an imbalance.
-        cascades = np.array(
-            [[0, 1, 1], [0, 1, np.inf], [1, 0, 1], [1, 0, np.inf],
-             [1, 1, 0], [np.inf, 0, 1]])
+        cascades = np.array([
+            [0, 1, 1], [0, 1, np.inf], [1, 0, 1], [1, 0, np.inf],
+            [1, 1, 0], [np.inf, 0, 1]
+        ])
         solver = GreedySolver(cascades)
 
         self.assertEqual(solver.solve_node(0), [1])
         self.assertEqual(solver.solve_node(1), [0])
         self.assertEqual(solver.solve_node(2), [1])
+
+    def test_resistant_nodes(self):
+        """
+        Tests cascades where some nodes never get infected.
+        """
+        cascades = np.array([
+            [0, 1, np.inf], [0, 1, np.inf], [1, 0, np.inf],
+        ])
+        solver = GreedySolver(cascades)
+
+        # First make sure that the infected nodes are solved for correctly.
+        self.assertEqual(solver.solve_node(0), [1])
+        self.assertEqual(solver.solve_node(1), [0])
+
+        # Test that no parents are returned for the resistant node.
+        self.assertEqual(solver.solve_node(2), [])
+
+    def test_three_node_tree(self):
+        """
+        Tests some cascades on a simple three-node tree graph.
+
+        Graph:
+                0
+              /  \
+             1    2
+        """
+        cascades = np.array([
+            [0, 1, 1], [1, 2, 0], [1, 0, 2], [0, 1, np.inf], [0, np.inf, 1],
+        ])
+        solver = GreedySolver(cascades)
+
+        self.assertEqual(solver.solve_node(1), [0])
+        self.assertEqual(solver.solve_node(2), [0])
+
+        # This test reflects the internals of the solver. Both 1 and 2
+        # infected zero once; the Counter object used makes it return the
+        # index in the case of a tie.
+        self.assertEqual(solver.solve_node(0), [1])
