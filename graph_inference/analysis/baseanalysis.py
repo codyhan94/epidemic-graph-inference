@@ -11,7 +11,25 @@ class BaseAnalysis(object):
     H = None
 
     def __init__(self, graphfile, inferredfile):
-        self.G = nx.readwrite.graphml.read_graphml(graphfile, node_type=int)
+        """
+        Set up the graphs from files containing the source and inferred graphs.
+
+        Note: The source graph's keys are read as strings and then converted
+        to integers using networkx because the analysis currently relies on
+        node labels staying consistent between the source and inferred graphs.
+
+        :param graphfile: the original (target) graph
+        :param inferredfile: the learned graph
+        :return: None
+        """
+        # G is the original graph, and it was originally processed with node
+        # label conversion to integers. This means we have to convert it here
+        # first before we analyze our algorithm's performance.
+        self.G = nx.readwrite.graphml.read_graphml(graphfile)
+        self.G = nx.convert_node_labels_to_integers(self.G)
+
+        # H was written "as is" to disk by the solver, so we can just read
+        # its nodes as integers.
         self.H = nx.readwrite.graphml.read_graphml(inferredfile, node_type=int)
 
     def edgeCorrect(self, G=None, H=None):

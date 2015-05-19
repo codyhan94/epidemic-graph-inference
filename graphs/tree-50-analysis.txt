@@ -1,0 +1,13 @@
+data/testin.graphml created
+
+Done simulating! Now solving...
+
+Solved graph saved to data/testout.graphml
+
+Starting analysis...
+correct edges 50
+missing edges: 0
+extra edges: 0
+edge number: 0
+degree sequence 0.0
+degree difference 0.0

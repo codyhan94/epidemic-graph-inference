@@ -17,7 +17,6 @@ inferredfile = "data/testout.graphml"
 from graph_inference.graphs.gnp import GNPgraph
 from graph_inference.graphs.tree import TreeGraph
 from graph_inference.sim.sirsim import SIRSim
-# dummy code below while Cody pushes his code
 from graph_inference.solver.greedysolver import GreedySolver
 from graph_inference.analysis.baseanalysis import BaseAnalysis
 
@@ -36,20 +35,21 @@ def circlepos(G, r0=10):
 if __name__ == "__main__":
     if GENERATOR is "TREE":
         graph = TreeGraph()
-        graph.generate(15, .2)
+        graph.generate(50, .2)
     else:
         graph = GNPgraph()
         graph.generate(n=50, p=.01, directed=True)
     graph.graphml(graphfile)
     print(graphfile, "created")
 
-    model = SIRSim(graphfile, n_cascades=20000, p_init=0.05)
+    n_cascades = 5000
+    p_init = 0.05
+    model = SIRSim(graphfile, n_cascades, p_init)
     cascades = model.run()
     print()
     print("Done simulating! Now solving...")
 
     solver = GreedySolver(cascades)
-    set_trace()
     solver.solve_graph(out_file=inferredfile)
     print()
     print("Solved graph saved to", inferredfile)
@@ -66,13 +66,14 @@ if __name__ == "__main__":
 
     # Make plots, using the dot package to make trees look nice.
     plt.figure(1)
-    plt.title('original graph')
+    plt.title('Original Graph')
     pos = nx.graphviz_layout(analysis.G, prog='dot')
-    # nx.draw(analysis.G, circlepos(analysis.G))
     nx.draw(analysis.G, pos, with_labels=True)
+
     plt.figure(2)
-    plt.title('analyzed graph')
+    plt.title('Analyzed Graph')
+    label = "{} cascades with p_init = {}.".format(n_cascades, p_init)
+    plt.figtext(0.3, 0.1, label)
     pos = nx.graphviz_layout(analysis.H, prog='dot')
-    # nx.draw(analysis.H, circlepos(analysis.G))
     nx.draw(analysis.H, pos, with_labels=True)
     plt.show()

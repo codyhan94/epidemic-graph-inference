@@ -93,7 +93,6 @@ class GreedySolver(BaseSolver):
         for node in range(len(self.cascades[0, ])):
             G[node] = self.solve_node(node)
 
-        set_trace()
         # Create the DiGraph object to either return or write to a file.
         nx_graph = nx.DiGraph(G)
         # Reverse the graph in-place to get the edges from parental
