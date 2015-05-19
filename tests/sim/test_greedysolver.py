@@ -152,5 +152,25 @@ class TestGreedySolverMethods(unittest.TestCase):
         ])
         solver = GreedySolver(cascades)
 
+        set_trace()
         H = solver.solve_graph()
         self.assertTrue(nx.is_isomorphic(G, H))
+
+    def test_solving_infs(self):
+        """
+        Tests having no infected nodes in particular cascades.
+
+        Graph:
+                0
+              /  \
+             1    2
+        """
+        cascades = np.array([
+            [np.inf, np.inf, np.inf], [np.inf, np.inf, np.inf],
+            [0, 1, np.inf], [0, np.inf, np.inf], [0, np.inf, 1]
+        ])
+        solver = GreedySolver(cascades)
+
+        self.assertEqual(solver.solve_node(1), [0])
+        self.assertEqual(solver.solve_node(2), [0])
+        self.assertEqual(solver.solve_node(0), [])
