@@ -1,8 +1,10 @@
 from pdb import set_trace
 import unittest
+import networkx as nx
 import numpy as np
 
 from graph_inference.solver.greedysolver import GreedySolver
+from graph_inference.sim.sirsim import SIRSim
 
 
 class TestGreedySolverMethods(unittest.TestCase):
@@ -128,3 +130,27 @@ class TestGreedySolverMethods(unittest.TestCase):
         # infected zero once; the Counter object used makes it return the
         # index in the case of a tie.
         self.assertEqual(solver.solve_node(0), [1])
+
+    def test_solve_graph(self):
+        """
+        Creates a simple graph, fakes a simulation on it, and tests the solver.
+
+        Graph:
+                0
+              /  \
+             1    2
+        """
+        G = {
+            0: [1, 2],
+            1: [],
+            2: [],
+        }
+        G = nx.DiGraph(G)
+
+        cascades = np.array([
+            [0, 1, 1], [0, 1, np.inf], [0, np.inf, 1],
+        ])
+        solver = GreedySolver(cascades)
+
+        H = solver.solve_graph()
+        self.assertTrue(nx.is_isomorphic(G, H))

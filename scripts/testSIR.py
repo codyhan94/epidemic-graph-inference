@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     graph = args.graph
 
-    S = SIRSim(graph, n_cascades=args.num_cascades, mu=0.05)
+    S = SIRSim(graph, n_cascades=args.num_cascades, p_init=0.05)
     cascades = S.run()
 
     solver = GreedySolver(cascades)

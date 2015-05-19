@@ -1,4 +1,5 @@
 from __future__ import print_function
+from collections import defaultdict
 
 from graph_inference.sim.basesim import BaseSim
 
@@ -9,7 +10,7 @@ import networkx as nx
 class SIRSim(BaseSim):
     """Base class for network inference simulations."""
 
-    def __init__(self, graph_file, n_cascades=1, mu=0.1):
+    def __init__(self, graph_file, n_cascades=1, p_init=0.1):
         """Set up a SIR simulation class.
         """
         super(SIRSim, self).__init__(graph_file, n_cascades)
@@ -31,7 +32,7 @@ class SIRSim(BaseSim):
         self.infection_times = np.ndarray(len(self.G))
         self.infection_times.fill(np.inf)
 
-        self.mu = mu
+        self.p_init = p_init
         self.DEBUG = False
         self.initialize_graph()
 
@@ -63,10 +64,25 @@ class SIRSim(BaseSim):
                 if 'weight' not in eattr:
                     eattr['weight'] = random.random()
 
-            # Seed each node with probability mu.
-            if random.random() < self.mu:
+            # Seed each node with probability p_init.
+            if random.random() < self.p_init:
                 self.infected.add(n)
                 self.infection_times[n] = 0
+
+    def compute_alpha(self):
+        """
+        Compute the value of the correlation decay coefficient of this graph.
+
+        This is alpha such that for every node the sum of all probabilities
+        of all incoming edges is at most 1 - alpha.
+
+        :return: alpha
+        :rtype: float
+        """
+        inc_weights = defaultdict(int)
+        for (u, v) in self.G.out_edges_iter():
+            inc_weights[v] += self.G[u][v]['weight']
+        return 1 - max(inc_weights.values())
 
     def step(self):
         """Runs one step of the simulation.
