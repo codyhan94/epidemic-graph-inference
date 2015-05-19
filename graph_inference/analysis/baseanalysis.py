@@ -11,8 +11,8 @@ class BaseAnalysis(object):
     H = None
 
     def __init__(self, graphfile, inferredfile):
-        self.G = nx.readwrite.graphml.read_graphml(graphfile)
-        self.H = nx.readwrite.graphml.read_graphml(inferredfile)
+        self.G = nx.readwrite.graphml.read_graphml(graphfile, node_type=int)
+        self.H = nx.readwrite.graphml.read_graphml(inferredfile, node_type=int)
 
     def edgeCorrect(self, G=None, H=None):
         """

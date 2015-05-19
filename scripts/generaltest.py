@@ -36,14 +36,14 @@ def circlepos(G, r0=10):
 if __name__ == "__main__":
     if GENERATOR is "TREE":
         graph = TreeGraph()
-        graph.generate(50, .2)
+        graph.generate(15, .2)
     else:
         graph = GNPgraph()
         graph.generate(n=50, p=.01, directed=True)
     graph.graphml(graphfile)
     print(graphfile, "created")
 
-    model = SIRSim(graphfile, n_cascades=15000, p_init=0.01)
+    model = SIRSim(graphfile, n_cascades=20000, p_init=0.05)
     cascades = model.run()
     print()
     print("Done simulating! Now solving...")

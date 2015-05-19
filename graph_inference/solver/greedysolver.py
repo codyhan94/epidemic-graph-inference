@@ -98,7 +98,8 @@ class GreedySolver(BaseSolver):
         nx_graph = nx.DiGraph(G)
         # Reverse the graph in-place to get the edges from parental
         # neighborhoods.
-        # nx_graph.reverse(copy=False)
+        # NOTE: setting copy=False in this function is NOT sufficient!
+        nx_graph = nx_graph.reverse()
         if out_file:
             nx.write_graphml(nx_graph, path=out_file)
             return
