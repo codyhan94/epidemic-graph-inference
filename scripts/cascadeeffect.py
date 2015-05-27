@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     if args.graph_type is "TREE":
         graph = TreeGraph()
-        graph.generate_powerlaw(n)
+        graph.generate(n)
     elif args.graph_type is "EDGEGRAPH":
         if not args.f:
             print('no file specified')
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     graph.graphml(graphfile)
     print(graphfile, "created")
 
-    n_cascades = 10
+    n_cascades = 20
     p_init = 0.05
     correctedges = []
     missingedges = []
@@ -83,25 +83,20 @@ if __name__ == "__main__":
     model = SIRSim(graphfile, n_cascades, p_init)
     for i in range(10):
         model.reset()
+        model.n_cascades = n_cascades
         cascades = model.run()
-        print()
-        print("Done simulating! Now solving...")
 
         solver = GreedySolver(cascades)
-        inferred = solver.solve_graph()
-        print()
-        print("Solved graph saved to", inferredfile)
+        inferred = solver.solve_graph(out_file=inferredfile)
 
-        print()
-        print("Starting analysis...")
-        analysis = BaseAnalysis(graph.G, inferred)
+        analysis = BaseAnalysis(graphfile, inferredfile)
         correctedges.append(analysis.edgeCorrect())
         missingedges.append(analysis.edgeError())
         extraedges.append(analysis.edgeExtra())
         ndifference.append(analysis.edgeDifference())
         dsequence.append(analysis.degreeSequence())
         ddifference.append(analysis.nodeDegreeDifference())
-        n_cascades += 10
+        n_cascades += 20
 
     # Make plots, using the dot package to make trees look nice.
     print(correctedges)
@@ -110,3 +105,19 @@ if __name__ == "__main__":
     print(ndifference)
     print(dsequence)
     print(ddifference)
+
+    # Make plots, using the dot package to make trees look nice.
+    plt.figure(1)
+    plt.title('Original Graph')
+    # pos = nx.graphviz_layout(analysis.G, prog='dot')
+    pos = circlepos(analysis.G)
+    nx.draw(analysis.G, pos, with_labels=True)
+
+    plt.figure(2)
+    plt.title('Analyzed Graph')
+    label = "{} cascades with p_init = {}.".format(n_cascades, p_init)
+    plt.figtext(0.3, 0.1, label)
+    # pos = nx.graphviz_layout(analysis.H, prog='dot')
+    pos = circlepos(analysis.G)
+    nx.draw(analysis.H, pos, with_labels=True)
+    plt.show()
