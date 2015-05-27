@@ -6,7 +6,10 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import math
 
-import sys, os
+import sys
+import os
+from argparse import ArgumentParser
+
 sys.path.append(os.getcwd())
 
 # CONSTANTS
@@ -14,8 +17,11 @@ GENERATOR = "TREE"  # or "GNP"
 graphfile = "data/testin.graphml"
 inferredfile = "data/testout.graphml"
 
+
+from graph_inference.graphs.gnp import BaseGraph
 from graph_inference.graphs.gnp import GNPgraph
 from graph_inference.graphs.tree import TreeGraph
+from graph_inference.graphs.edgelist import EdgeListGraph
 from graph_inference.sim.sirsim import SIRSim
 from graph_inference.solver.greedysolver import GreedySolver
 from graph_inference.analysis.baseanalysis import BaseAnalysis
@@ -33,50 +39,74 @@ def circlepos(G, r0=10):
 
 
 if __name__ == "__main__":
-    if GENERATOR is "TREE":
+    # Generate Graph
+    parser = ArgumentParser()
+    # parser.add_argument('graph_type', help='TREE, GNP, or EDGEGRAPH')
+    # parser.add_argument('-f', 'filename', help='Filename of file to load',
+    #                     type=str, default=None)
+    # parser.add_argument('-o', 'outfile', help='File to write to at end',
+    #                     type=str, default=None)
+    # parser.add_argument('-n', 'nodes', help='number of nodes',
+    #                     type=num, default=50)
+    args = parser.parse_args()
+    n = 50
+    args.graph_type = "TREE"
+
+    if args.graph_type is "TREE":
         graph = TreeGraph()
-        graph.generate(50, .2)
+        graph.generate_powerlaw(n)
+    elif args.graph_type is "EDGEGRAPH":
+        if not args.f:
+            print('no file specified')
+            sys.exit()
+        else:
+            try:
+                graph = EdgeListGraph()
+                graph.generate(args.f)
+            except:
+                print("fatal error. Aborting")  # not so good but im tired
+                sys.exit()
     else:
         graph = GNPgraph()
-        graph.generate(n=50, p=.01, directed=True)
+        graph.generate(n=n, p=.01, directed=True)
     graph.graphml(graphfile)
     print(graphfile, "created")
 
-    n_cascades = 50
+    n_cascades = 10
     p_init = 0.05
+    correctedges = []
+    missingedges = []
+    extraedges = []
+    ndifference = []
+    dsequence = []
+    ddifference = []
     model = SIRSim(graphfile, n_cascades, p_init)
-    cascades = model.run()
-    print()
-    print("Done simulating! Now solving...")
+    for i in range(10):
+        model.reset()
+        cascades = model.run()
+        print()
+        print("Done simulating! Now solving...")
 
-    solver = GreedySolver(cascades)
-    solver.solve_graph(out_file=inferredfile)
-    print()
-    print("Solved graph saved to", inferredfile)
+        solver = GreedySolver(cascades)
+        inferred = solver.solve_graph()
+        print()
+        print("Solved graph saved to", inferredfile)
 
-    print()
-    print("Starting analysis...")
-    analysis = BaseAnalysis(graphfile, inferredfile)
-    print("correct edges", analysis.edgeCorrect())
-    print("missing edges:", analysis.edgeError())
-    print("extra edges:", analysis.edgeExtra())
-    print("edge number:", analysis.edgeDifference())
-    print("degree sequence", analysis.degreeSequence())
-    print("degree difference", analysis.nodeDegreeDifference())
+        print()
+        print("Starting analysis...")
+        analysis = BaseAnalysis(graph.G, inferred)
+        correctedges.append(analysis.edgeCorrect())
+        missingedges.append(analysis.edgeError())
+        extraedges.append(analysis.edgeExtra())
+        ndifference.append(analysis.edgeDifference())
+        dsequence.append(analysis.degreeSequence())
+        ddifference.append(analysis.nodeDegreeDifference())
+        n_cascades += 10
 
     # Make plots, using the dot package to make trees look nice.
-    plt.figure(1)
-    plt.title('Original Graph')
-    pos = circlepos(analysis.G)
-    # pos = nx.graphviz_layout(analysis.G, prog='dot')
-    plt.figtext(0.3, 0.1, graph.description())
-    nx.draw(analysis.G, pos, with_labels=True)
-
-    plt.figure(2)
-    plt.title('Analyzed Graph')
-    label = "{} cascades with p_init = {}.".format(n_cascades, p_init)
-    plt.figtext(0.3, 0.1, label)
-    pos = circlepos(analysis.H)
-    # pos = nx.graphviz_layout(analysis.H, prog='dot')
-    nx.draw(analysis.H, pos, with_labels=True)
-    plt.show()
+    print(correctedges)
+    print(missingedges)
+    print(extraedges)
+    print(ndifference)
+    print(dsequence)
+    print(ddifference)

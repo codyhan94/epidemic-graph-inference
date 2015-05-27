@@ -61,7 +61,7 @@ class GreedySolver(BaseSolver):
                     (cascade == cascade[node] - 1) &
                     (np.isfinite(cascade[node])))[0]
 
-                # These cascades are going to be removed for the next iteration.
+                # These cascades are going to be removed for the next iteration
                 # if np.any(possible_infectors):
                 if len(possible_infectors) > 0:
                     accounted_cascades.append(i)

@@ -2,6 +2,7 @@ from __future__ import print_function
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
+# see https://www.cs.cmu.edu/~jingx/docs/DBreport.pdf
 
 
 class BaseAnalysis(object):
@@ -18,19 +19,41 @@ class BaseAnalysis(object):
         to integers using networkx because the analysis currently relies on
         node labels staying consistent between the source and inferred graphs.
 
-        :param graphfile: the original (target) graph
-        :param inferredfile: the learned graph
+        :param graphfile: The original (target) graph. Takes either a filename
+                          or a networkx graph
+        :param inferredfile: the learned graph. Takes either a filename or an
+                             networkx graph.
         :return: None
         """
         # G is the original graph, and it was originally processed with node
         # label conversion to integers. This means we have to convert it here
         # first before we analyze our algorithm's performance.
-        self.G = nx.readwrite.graphml.read_graphml(graphfile)
+        if type(graphfile) is nx.DiGraph or type(graphfile) is nx.Graph:
+            self.G = graphfile
+        elif type(graphfile) is str:
+            try:
+                self.G = nx.read_graphml(graphfile)
+            except:
+                raise TypeError('file must be in graphml format')
+        else:
+            raise TypeError(
+                'argument graphfile must be a networkx graph or a string')
         self.G = nx.convert_node_labels_to_integers(self.G)
 
         # H was written "as is" to disk by the solver, so we can just read
         # its nodes as integers.
-        self.H = nx.readwrite.graphml.read_graphml(inferredfile, node_type=int)
+
+        if type(inferredfile) is nx.DiGraph or type(inferredfile) is nx.Graph:
+            self.H = inferredfile
+        elif type(inferredfile) is str:
+            try:
+                self.H = nx.readwrite.graphml.read_graphml(inferredfile,
+                                                           node_type=int)
+            except:
+                raise TypeError('file must be in graphml format')
+        else:
+            raise TypeError('argument inferredfile must be a networkx ' +
+                            'graph or a string')
 
     def edgeCorrect(self, G=None, H=None):
         """

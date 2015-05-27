@@ -33,12 +33,13 @@ def circlepos(G, r0=10):
 
 
 if __name__ == "__main__":
+    n = 100
     if GENERATOR is "TREE":
         graph = TreeGraph()
-        graph.generate(50, .2)
+        graph.generate(n, .2)
     else:
         graph = GNPgraph()
-        graph.generate(n=50, p=.01, directed=True)
+        graph.generate(n=n, p=1./n, directed=True)
     graph.graphml(graphfile)
     print(graphfile, "created")
 
@@ -67,13 +68,15 @@ if __name__ == "__main__":
     # Make plots, using the dot package to make trees look nice.
     plt.figure(1)
     plt.title('Original Graph')
-    pos = nx.graphviz_layout(analysis.G, prog='dot')
+    # pos = nx.graphviz_layout(analysis.G, prog='dot')
+    pos = circlepos(analysis.G)
     nx.draw(analysis.G, pos, with_labels=True)
 
     plt.figure(2)
     plt.title('Analyzed Graph')
     label = "{} cascades with p_init = {}.".format(n_cascades, p_init)
     plt.figtext(0.3, 0.1, label)
-    pos = nx.graphviz_layout(analysis.H, prog='dot')
+    # pos = nx.graphviz_layout(analysis.H, prog='dot')
+    pos = circlepos(analysis.G)
     nx.draw(analysis.H, pos, with_labels=True)
     plt.show()

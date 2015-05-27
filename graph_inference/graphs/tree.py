@@ -4,7 +4,7 @@ from graph_inference.graphs.basegraph import BaseGraph
 
 import random
 import networkx as nx
-# import sys
+import sys
 # import matplotlib.pyplot as plt
 
 
@@ -31,6 +31,21 @@ class TreeGraph(BaseGraph):  # BaseGraph):
                     self.G.add_edge(node, i)
                     if i == n:
                         break
+
+    def generate_powerlaw(self, n, gamma=3):
+        "Generates a random powerlaw tree using nx.random_powerlaw_tree"
+        done = False
+        tries = 1000
+        while(tries < 10000000 and not done):
+            try:
+                self.G = nx.random_powerlaw_tree(n, gamma, tries=10000)
+            except nx.NetworkXError:
+                done = False
+                tries *= 10
+        if not done:
+            print("Unable to generate such powerlaw tree. Try a smaller graph")
+            print("Aborting")
+            sys.exit(1)
 
     def description(self):
         """ Returns a description of the graph """
