@@ -6,6 +6,7 @@ from graph_inference.graphs.basegraph import BaseGraph
 import networkx as nx
 import sys
 
+
 class GNPgraph(BaseGraph):
     """Generates a GNP graph."""
 
@@ -18,7 +19,14 @@ class GNPgraph(BaseGraph):
 
     def generate(self, n=1000, p=.5, directed=False):
         self.G = nx.fast_gnp_random_graph(n, p, None, directed)
+        self.p = p
+        self.n = n
         self.directed = directed
+
+    def description(self):
+        """ Returns a description of the graph """
+        retstr = "GNP with " + str(self.n) + " nodes and p = " + str(self.p)
+        return retstr
 
 if __name__ == "__main__":
     """ Example code """
@@ -28,4 +36,3 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     graph = GNPgraph()
     graph.graphml(filename)
-

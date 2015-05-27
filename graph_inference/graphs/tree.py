@@ -9,7 +9,7 @@ import networkx as nx
 
 
 class TreeGraph(BaseGraph):  # BaseGraph):
-    """Generates a GNP graph."""
+    """Generates a Tree"""
 
     def __init__(self):
         # super(TreeGraph, self).__init__()
@@ -22,7 +22,8 @@ class TreeGraph(BaseGraph):  # BaseGraph):
         self.G = nx.DiGraph()
         i = 0
         self.G.add_node(i)
-
+        self.n = n
+        self.p = p
         while i < n:
             for node in self.G.nodes():
                 if random.randint(0, 1):
@@ -30,6 +31,11 @@ class TreeGraph(BaseGraph):  # BaseGraph):
                     self.G.add_edge(node, i)
                     if i == n:
                         break
+
+    def description(self):
+        """ Returns a description of the graph """
+        retstr = "Tree with " + str(self.n) + " nodes and p = " + str(self.p)
+        return retstr
 
 
 # if __name__ == "__main__":

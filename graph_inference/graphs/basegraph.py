@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
+
 class BaseGraph(object):
     """ Base graph structure
 
@@ -36,6 +37,10 @@ class BaseGraph(object):
         nx.draw(self.G)
         plt.show()
         pass
+
+    def description(self):
+        """ Returns a string """
+        return "Generic " + self.graph_type + " graph"
 
     def laplacian(self):
         """Returns the Laplacian matrix.
