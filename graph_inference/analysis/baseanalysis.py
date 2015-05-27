@@ -52,8 +52,8 @@ class BaseAnalysis(object):
             except:
                 raise TypeError('file must be in graphml format')
         else:
-            raise TypeError('argument inferredfile must be a networkx ' +
-                            'graph or a string')
+            print("Warning. no inferred file")
+            self.H = None
 
     def edgeCorrect(self, G=None, H=None):
         """

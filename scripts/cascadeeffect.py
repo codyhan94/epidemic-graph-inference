@@ -81,21 +81,37 @@ if __name__ == "__main__":
     dsequence = []
     ddifference = []
     model = SIRSim(graphfile, n_cascades, p_init)
+    analysis = BaseAnalysis(graphfile, None)
     for i in range(10):
-        model.reset()
         model.n_cascades = n_cascades
-        cascades = model.run()
+        print("Starting simulation with ", n_cascades, " cascades")
 
-        solver = GreedySolver(cascades)
-        inferred = solver.solve_graph(out_file=inferredfile)
+        for j in range(10):
+            a = []
+            b = []
+            c = []
+            d = []
+            e = []
+            f = []
+            model.reset()
+            cascades = model.run()
 
-        analysis = BaseAnalysis(graphfile, inferredfile)
-        correctedges.append(analysis.edgeCorrect())
-        missingedges.append(analysis.edgeError())
-        extraedges.append(analysis.edgeExtra())
-        ndifference.append(analysis.edgeDifference())
-        dsequence.append(analysis.degreeSequence())
-        ddifference.append(analysis.nodeDegreeDifference())
+            solver = GreedySolver(cascades)
+            inferred = solver.solve_graph()
+
+            a.append(analysis.edgeCorrect(H=inferred))
+            b.append(analysis.edgeError(H=inferred))
+            c.append(analysis.edgeExtra(H=inferred))
+            d.append(analysis.edgeDifference(H=inferred))
+            e.append(analysis.degreeSequence(H=inferred))
+            f.append(analysis.nodeDegreeDifference(H=inferred))
+
+        correctedges.append(float(reduce(lambda x, y: x+y, a))/len(a))
+        missingedges.append(reduce(lambda x, y: x+y, b)/len(b))
+        extraedges.append(reduce(lambda x, y: x+y, c)/len(c))
+        ndifference.append(reduce(lambda x, y: x+y, d)/len(d))
+        dsequence.append(reduce(lambda x, y: x+y, e)/len(e))
+        ddifference.append(reduce(lambda x, y: x+y, f)/len(f))
         n_cascades += 20
 
     # Make plots, using the dot package to make trees look nice.
@@ -107,17 +123,19 @@ if __name__ == "__main__":
     print("Degree difference: ", ddifference)
 
     # Make plots, using the dot package to make trees look nice.
-    plt.figure(1)
-    plt.title('Original Graph')
-    # pos = nx.graphviz_layout(analysis.G, prog='dot')
-    pos = circlepos(analysis.G)
-    nx.draw(analysis.G, pos, with_labels=True)
+    plotit = False
+    if plotit:
+        plt.figure(1)
+        plt.title('Original Graph')
+        # pos = nx.graphviz_layout(analysis.G, prog='dot')
+        pos = circlepos(analysis.G)
+        nx.draw(analysis.G, pos, with_labels=True)
 
-    plt.figure(2)
-    plt.title('Analyzed Graph')
-    label = "{} cascades with p_init = {}.".format(n_cascades, p_init)
-    plt.figtext(0.3, 0.1, label)
-    # pos = nx.graphviz_layout(analysis.H, prog='dot')
-    pos = circlepos(analysis.G)
-    nx.draw(analysis.H, pos, with_labels=True)
-    plt.show()
+        plt.figure(2)
+        plt.title('Analyzed Graph')
+        label = "{} cascades with p_init = {}.".format(n_cascades, p_init)
+        plt.figtext(0.3, 0.1, label)
+        # pos = nx.graphviz_layout(analysis.H, prog='dot')
+        pos = circlepos(analysis.G)
+        nx.draw(inferred, pos, with_labels=True)
+        plt.show()
