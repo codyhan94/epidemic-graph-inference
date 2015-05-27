@@ -99,12 +99,12 @@ if __name__ == "__main__":
         n_cascades += 20
 
     # Make plots, using the dot package to make trees look nice.
-    print(correctedges)
-    print(missingedges)
-    print(extraedges)
-    print(ndifference)
-    print(dsequence)
-    print(ddifference)
+    print("Number of Correct Edges: ", correctedges)
+    print("Number of Incorrect Edges: ", missingedges)
+    print("Extraneous edges: ", extraedges)
+    print("Difference in edge number: ", ndifference)
+    print("Degree Sequence: ", dsequence)
+    print("Degree difference: ", ddifference)
 
     # Make plots, using the dot package to make trees look nice.
     plt.figure(1)
