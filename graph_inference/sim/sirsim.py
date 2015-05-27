@@ -8,7 +8,6 @@ import numpy as np
 import networkx as nx
 
 class SIRSim(BaseSim):
-    """Base class for network inference simulations."""
 
     def __init__(self, graph_file, n_cascades=1, p_init=0.1):
         """Set up a SIR simulation class.
