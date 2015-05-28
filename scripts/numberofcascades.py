@@ -46,7 +46,7 @@ if __name__ == "__main__":
     print(graphfile, "created")
     G = graph.G
 
-    n_cascades = 2000
+    n_cascades = 200
     p_init = 0.05
     model = SIRSim(G, n_cascades, p_init)
     print("Starting simulation with ", n_cascades, " cascades")
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     unfound = [True] * len(edgelist)
     foundtimes = [n_cascades] * len(edgelist)
     for i in range(n_cascades):
-        solver = GreedySolver(cascades[:i+1])
+        solver = GreedySolver(cascades[:i + 1])
         inferred = solver.solve_graph()
         newedges = inferred.edges()
         for j in range(len(edgelist)):
@@ -78,14 +78,16 @@ if __name__ == "__main__":
     axes = fig.add_subplot(1, 1, 1, axisbg='#C8C8C8')
     pos = nx.graphviz_layout(analysis.G, prog='dot')
     # pos = nx.graphviz_layout(analysis.G, prog='dot')
-    dnode = nx.draw_networkx_nodes(analysis.G, pos, node_size=400,
+    dnode = nx.draw_networkx_nodes(analysis.G, pos, node_size=500,
                                    node_color='#FF6E1E')
 
     enode = nx.draw_networkx_edges(analysis.G, pos, edge_color=range(n),
                                    edge_cmap=plt.cm.Oranges, width=4,
                                    arrows=False)
-    nx.draw_networkx_labels(analysis.G, pos)
+    nx.draw_networkx_edge_labels(
+        analysis.G, pos=pos, edge_labels=dict(zip(edgelist, foundtimes))
+    )
     plt.colorbar(enode)
     plt.axis('off')
-    plt.savefig("edge_colormap.png")
+    plt.savefig("edge_colormap.pdf", facecolor='#C8C8C8')
     plt.show()
