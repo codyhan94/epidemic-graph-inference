@@ -26,6 +26,8 @@ from graph_inference.sim.sirsim import SIRSim
 from graph_inference.solver.greedysolver import GreedySolver
 from graph_inference.analysis.baseanalysis import BaseAnalysis
 
+import numpy as np
+
 
 def circlepos(G, r0=10):
     pos = {}
@@ -41,21 +43,23 @@ def circlepos(G, r0=10):
 if __name__ == "__main__":
     # Generate Graph
     parser = ArgumentParser()
-    # parser.add_argument('graph_type', help='TREE, GNP, or EDGEGRAPH')
-    # parser.add_argument('-f', 'filename', help='Filename of file to load',
-    #                     type=str, default=None)
-    # parser.add_argument('-o', 'outfile', help='File to write to at end',
-    #                     type=str, default=None)
-    # parser.add_argument('-n', 'nodes', help='number of nodes',
-    #                     type=num, default=50)
+    parser.add_argument('graph_type', help='TREE, GNP, or EDGEGRAPH')
+    parser.add_argument('-f', '--filename', help='Filename of file to load',
+                        type=str, default=None)
+    parser.add_argument('-o', '--outfile', help='File to write to at end',
+                        type=str, default=None)
+    parser.add_argument('-n', '--nodes', help='number of nodes',
+                        type=int, default=50)
     args = parser.parse_args()
-    n = 50
-    args.graph_type = "TREE"
 
-    if args.graph_type is "TREE":
+    n = args.nodes
+
+    graph = None
+
+    if args.graph_type == "TREE":
         graph = TreeGraph()
         graph.generate(n)
-    elif args.graph_type is "EDGEGRAPH":
+    elif args.graph_type == "EDGEGRAPH":
         if not args.f:
             print('no file specified')
             sys.exit()
@@ -72,7 +76,8 @@ if __name__ == "__main__":
     graph.graphml(graphfile)
     print(graphfile, "created")
 
-    n_cascades = 20
+    stride = 50
+    n_cascades = stride
     p_init = 0.05
     correctedges = []
     missingedges = []
@@ -82,18 +87,17 @@ if __name__ == "__main__":
     ddifference = []
     model = SIRSim(graphfile, n_cascades, p_init)
     analysis = BaseAnalysis(graphfile, None)
-    for i in range(10):
+    for i in range(25):
         model.n_cascades = n_cascades
         print("Starting simulation with ", n_cascades, " cascades")
+        a = []
+        b = []
+        c = []
+        d = []
+        e = []
+        f = []
 
         for j in range(10):
-            a = []
-            b = []
-            c = []
-            d = []
-            e = []
-            f = []
-            model.reset()
             cascades = model.run()
 
             solver = GreedySolver(cascades)
@@ -106,13 +110,13 @@ if __name__ == "__main__":
             e.append(analysis.degreeSequence(H=inferred))
             f.append(analysis.nodeDegreeDifference(H=inferred))
 
-        correctedges.append(float(reduce(lambda x, y: x+y, a))/len(a))
-        missingedges.append(reduce(lambda x, y: x+y, b)/len(b))
-        extraedges.append(reduce(lambda x, y: x+y, c)/len(c))
-        ndifference.append(reduce(lambda x, y: x+y, d)/len(d))
-        dsequence.append(reduce(lambda x, y: x+y, e)/len(e))
-        ddifference.append(reduce(lambda x, y: x+y, f)/len(f))
-        n_cascades += 20
+        correctedges.append(float(np.mean(a)))
+        missingedges.append(float(np.mean(b)))
+        extraedges.append(float(np.mean(c)))
+        ndifference.append(float(np.mean(d)))
+        dsequence.append(np.mean(e))
+        ddifference.append(np.mean(f))
+        n_cascades += stride
 
     # Make plots, using the dot package to make trees look nice.
     print("Number of Correct Edges: ", correctedges)
