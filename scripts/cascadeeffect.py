@@ -93,7 +93,6 @@ if __name__ == "__main__":
             d = []
             e = []
             f = []
-            model.reset()
             cascades = model.run()
 
             solver = GreedySolver(cascades)

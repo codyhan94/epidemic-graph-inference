@@ -7,6 +7,7 @@ import random
 import numpy as np
 import networkx as nx
 
+
 class SIRSim(BaseSim):
     """Base class for network inference simulations."""
 
