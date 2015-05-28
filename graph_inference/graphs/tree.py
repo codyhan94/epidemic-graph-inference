@@ -39,7 +39,8 @@ class TreeGraph(BaseGraph):  # BaseGraph):
         while(tries < 10000000 and not done):
             try:
                 self.G = nx.random_powerlaw_tree(n, gamma, tries=10000,
-                                                 create_using=nx.Digraph)
+                                                 create_using=nx.DiGraph)
+                self.G = nx.DiGraph(self.G)
                 done = True
             except nx.NetworkXError:
                 done = False

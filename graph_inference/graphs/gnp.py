@@ -7,11 +7,11 @@ import networkx as nx
 import sys
 
 
-class GNPgraph(BaseGraph):
+class GNPGraph(BaseGraph):
     """Generates a GNP graph."""
 
     def __init__(self):
-        super(GNPgraph, self).__init__()
+        super(GNPGraph, self).__init__()
         self.edge_weighted = False
         self.node_weighted = False
         self.graph_type = "GNP"
@@ -34,5 +34,5 @@ if __name__ == "__main__":
         print("syntax: python gnp outfile", file=sys.stderr)
         sys.exit(-1)
     filename = sys.argv[1]
-    graph = GNPgraph()
+    graph = GNPGraph()
     graph.graphml(filename)

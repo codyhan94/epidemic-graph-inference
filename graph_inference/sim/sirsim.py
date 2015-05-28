@@ -18,7 +18,8 @@ class SIRSim(BaseSim):
             super(SIRSim, self).__init__(graph_file, n_cascades)
             # Use integer labels to index into the infection times vector.
             self.G = nx.convert_node_labels_to_integers(self.G)
-        elif isinstance(graph_file, nx.DiGraph):
+        elif isinstance(graph_file, nx.DiGraph) or \
+                isinstance(graph_file, nx.Graph):
             self.G = graph_file
             self.n_cascades = n_cascades
 
@@ -93,7 +94,8 @@ class SIRSim(BaseSim):
 
         :return: Nothing
         """
-        # Increment time first so that we record accurate first-infection times.
+        # Increment time first so that we record accurate first-infection
+        # times.
         self.t += 1
         next_infected = set()
 

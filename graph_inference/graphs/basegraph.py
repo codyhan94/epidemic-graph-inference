@@ -42,6 +42,9 @@ class BaseGraph(object):
         """ Returns a string """
         return "Generic " + self.graph_type + " graph"
 
+    def __repr__(self):
+        return self.description()
+
     def laplacian(self):
         """Returns the Laplacian matrix.
 
