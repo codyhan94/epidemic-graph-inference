@@ -41,11 +41,12 @@ if __name__ == "__main__":
         graph = GNPgraph()
         graph.generate(n=n, p=1./n, directed=True)
     graph.graphml(graphfile)
+    set_trace()
     print(graphfile, "created")
 
     n_cascades = 5000
     p_init = 0.05
-    model = SIRSim(graphfile, n_cascades, p_init)
+    model = SIRSim(graph, n_cascades, p_init)
     cascades = model.run()
     print()
     print("Done simulating! Now solving...")

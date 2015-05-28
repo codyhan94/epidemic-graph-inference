@@ -16,7 +16,7 @@ class TreeGraph(BaseGraph):  # BaseGraph):
         self.edge_weighted = False
         self.node_weighted = False
         self.graph_type = "Tree"
-        self.directed = False
+        self.directed = True
 
     def generate(self, n=1000, p=.2):
         self.G = nx.DiGraph()
@@ -26,19 +26,21 @@ class TreeGraph(BaseGraph):  # BaseGraph):
         self.p = p
         while i < n:
             for node in self.G.nodes():
-                if random.randint(0, 1):
+                if random.random() < p:
                     i += 1
                     self.G.add_edge(node, i)
                     if i == n:
                         break
 
-    def generate_powerlaw(self, n, gamma=3):
+    def generate_powerlaw(self, n, gamma=3, create_using=nx.DiGraph):
         "Generates a random powerlaw tree using nx.random_powerlaw_tree"
         done = False
         tries = 1000
         while(tries < 10000000 and not done):
             try:
-                self.G = nx.random_powerlaw_tree(n, gamma, tries=10000)
+                self.G = nx.random_powerlaw_tree(n, gamma, tries=10000,
+                                                 create_using=nx.Digraph)
+                done = True
             except nx.NetworkXError:
                 done = False
                 tries *= 10
