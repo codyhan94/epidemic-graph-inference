@@ -20,6 +20,10 @@ class SISim(BaseSim):
     if a node was never infected.
     """
 
+    # Maximum number of times the graph can go unchanged before the infection
+    # is deemed stable.
+    MAX_STABLE_COUNT = 5
+
     def __init__(self, graph_file, n_cascades=1, mu=0.1):
         """Set up a
         """
@@ -31,7 +35,8 @@ class SISim(BaseSim):
         # Every node starts off susceptible.
         self.susceptible = set(self.G.nodes())
         self.infected = set()
-        self.can_be_infected = set()
+        self.last_infected = set()
+        self.stable_count = 0
 
         # Mark the timesteps.
         self.t = 0
@@ -41,7 +46,7 @@ class SISim(BaseSim):
         self.infection_times.fill(np.inf)
 
         self.mu = mu
-        self.DEBUG = True
+        self.DEBUG = False
 
         self.initialize_graph()
 
@@ -50,7 +55,9 @@ class SISim(BaseSim):
         Resets the simulation so we can run multiple cascades.
         """
         self.infected.clear()
+        self.last_infected.clear()
         self.t = 0
+        self.stable_count = 0
         self.infection_times.fill(np.inf)
         self.initialize_graph()
 
@@ -69,7 +76,8 @@ class SISim(BaseSim):
                 if 'weight' not in eattr:
                     eattr['weight'] = random.random()
 
-            # Seed each node with probability mu.
+        # Seed each node with probability mu.
+        for n in self.G.nodes_iter():
             if random.random() < self.mu:
                 self.infected.add(n)
                 self.infection_times[n] = 0
@@ -83,7 +91,6 @@ class SISim(BaseSim):
         self.t += 1
         next_infected = set()
 
-        set_trace()
         for n in self.infected:
             for nbr in self.G[n]:
                 # self.dprint('%d trying to infect %d at time %d' % (n, nbr, self.t))
@@ -100,8 +107,12 @@ class SISim(BaseSim):
 
     def stable(self):
         """Has the epidemic stabilized? """
-        self.dprint('Infected \ previous_infected:', self.infected.difference(self.last_infected))
-        return self.last_infected == self.infected
+        # self.dprint('Infected \ previous_infected:', self.infected.difference(self.last_infected))
+        if self.stable_count == self.MAX_STABLE_COUNT:
+            return True
+        elif self.last_infected == self.infected:
+            self.stable_count += 1
+            return False
 
     def run(self):
         """Runs the simulation and returns the output (vector of times)
@@ -112,7 +123,6 @@ class SISim(BaseSim):
 
         for _ in range(self.n_cascades):
             while not self.stable():
-                print('Infected: ', self.infected)
                 self.step()
 
             all_cascades.append(self.infection_times.copy())
