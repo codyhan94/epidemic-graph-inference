@@ -17,6 +17,7 @@ inferredfile = "data/testout.graphml"
 from graph_inference.graphs.gnp import GNPGraph
 from graph_inference.graphs.tree import TreeGraph
 from graph_inference.sim.sirsim import SIRSim
+from graph_inference.sim.sisim import SISim
 from graph_inference.solver.greedysolver import GreedySolver
 from graph_inference.analysis.baseanalysis import BaseAnalysis
 
@@ -68,15 +69,15 @@ if __name__ == "__main__":
     # Make plots, using the dot package to make trees look nice.
     plt.figure(1)
     plt.title('Original Graph')
-    # pos = nx.graphviz_layout(analysis.G, prog='dot')
-    pos = circlepos(analysis.G)
+    pos = nx.graphviz_layout(analysis.G, prog='dot')
+    # pos = circlepos(analysis.G)
     nx.draw(analysis.G, pos, with_labels=True)
 
     plt.figure(2)
     plt.title('Analyzed Graph')
     label = "{} cascades with p_init = {}.".format(n_cascades, p_init)
     plt.figtext(0.3, 0.1, label)
-    # pos = nx.graphviz_layout(analysis.H, prog='dot')
-    pos = circlepos(analysis.G)
+    pos = nx.graphviz_layout(analysis.H, prog='dot')
+    # pos = circlepos(analysis.G)
     nx.draw(analysis.H, pos, with_labels=True)
     # plt.show()

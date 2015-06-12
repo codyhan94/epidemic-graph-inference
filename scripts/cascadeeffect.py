@@ -76,18 +76,22 @@ if __name__ == "__main__":
     graph.graphml(graphfile)
     print(graphfile, "created")
 
+    min_cascades = 50
     stride = 50
-    n_cascades = stride
+    max_cascades = 1000
     p_init = 0.05
+
+    n_cascade_lst = np.arange(min_cascades, max_cascades, stride)
+
     correctedges = []
     missingedges = []
     extraedges = []
     ndifference = []
     dsequence = []
     ddifference = []
-    model = SIRSim(graphfile, n_cascades, p_init)
+    model = SIRSim(graphfile, min_cascades, p_init)
     analysis = BaseAnalysis(graphfile, None)
-    for i in range(25):
+    for n_cascades in n_cascade_lst:
         model.n_cascades = n_cascades
         print("Starting simulation with ", n_cascades, " cascades")
         a = []
@@ -127,7 +131,7 @@ if __name__ == "__main__":
     print("Degree difference: ", ddifference)
 
     # Make plots, using the dot package to make trees look nice.
-    plotit = False
+    plotit = True
     if plotit:
         plt.figure(1)
         plt.title('Original Graph')
@@ -142,4 +146,15 @@ if __name__ == "__main__":
         # pos = nx.graphviz_layout(analysis.H, prog='dot')
         pos = circlepos(analysis.G)
         nx.draw(inferred, pos, with_labels=True)
+
+        correct_ratios = np.array(correctedges) / graph.n
+
+        plt.figure(3)
+        plt.title('Percentage of original edges inferred versus number of '
+                  'cascades')
+        plt.plot(n_cascade_lst, correct_ratios, ls='-', marker='o')
+        plt.title("Cascades needed for successful graph recovery (trees)")
+        plt.xlabel("Number of cascades")
+        plt.ylabel("Percentage of edges recovered")
+        plt.savefig("tree-recovery-percentages.pdf")
         plt.show()

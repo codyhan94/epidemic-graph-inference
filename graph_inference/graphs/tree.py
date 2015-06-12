@@ -32,7 +32,7 @@ class TreeGraph(BaseGraph):  # BaseGraph):
                     if i == n:
                         break
 
-    def generate_powerlaw(self, n, gamma=3, create_using=nx.DiGraph):
+    def generate_powerlaw(self, n, gamma=3):
         "Generates a random powerlaw tree using nx.random_powerlaw_tree"
         done = False
         tries = 1000

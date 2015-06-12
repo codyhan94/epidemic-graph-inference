@@ -26,6 +26,8 @@ from graph_inference.sim.sirsim import SIRSim
 from graph_inference.solver.greedysolver import GreedySolver
 from graph_inference.analysis.baseanalysis import BaseAnalysis
 
+import numpy as np
+
 
 def circlepos(G, r0=10):
     pos = {}
@@ -40,7 +42,7 @@ def circlepos(G, r0=10):
 
 if __name__ == "__main__":
     # Generate Graph
-    n = 50
+    n = 30
     graph = TreeGraph()
     graph.generate(n)
     graph.graphml(graphfile)

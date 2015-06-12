@@ -63,13 +63,14 @@ class SIRSim(BaseSim):
 
         Note: only assigns a weight to an edge if it doesn't have one already.
         """
+        # Assign an edge weight to each edge that doesn't yet have one.
         for n, nbrdict in self.G.adjacency_iter():
-            # Assign an edge weight to each edge.
             for nbr, eattr in nbrdict.iteritems():
                 if 'weight' not in eattr:
                     eattr['weight'] = random.random()
 
-            # Seed each node with probability p_init.
+        # Seed each node with probability p_init.
+        for n in self.G.nodes_iter():
             if random.random() < self.p_init:
                 self.infected.add(n)
                 self.infection_times[n] = 0
