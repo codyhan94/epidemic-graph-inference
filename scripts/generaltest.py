@@ -10,11 +10,11 @@ import sys, os
 sys.path.append(os.getcwd())
 
 # CONSTANTS
-GENERATOR = "GNP"  # or "GNP"
+GENERATOR = "TREE"  # or "GNP"
 graphfile = "data/testin.graphml"
 inferredfile = "data/testout.graphml"
 
-from graph_inference.graphs.gnp import GNPgraph
+from graph_inference.graphs.gnp import GNPGraph
 from graph_inference.graphs.tree import TreeGraph
 from graph_inference.sim.sirsim import SIRSim
 from graph_inference.solver.greedysolver import GreedySolver
@@ -38,33 +38,32 @@ if __name__ == "__main__":
         graph = TreeGraph()
         graph.generate(n, .2)
     else:
-        graph = GNPgraph()
+        graph = GNPGraph()
         graph.generate(n=n, p=1./n, directed=True)
-    graph.graphml(graphfile)
-    set_trace()
     print(graphfile, "created")
 
-    n_cascades = 5000
+    n_cascades = 500
     p_init = 0.05
-    model = SIRSim(graph, n_cascades, p_init)
+    model = SIRSim(graph.G, n_cascades, p_init)
     cascades = model.run()
     print()
     print("Done simulating! Now solving...")
 
     solver = GreedySolver(cascades)
-    solver.solve_graph(out_file=inferredfile)
+    inferred = solver.solve_graph()
     print()
     print("Solved graph saved to", inferredfile)
 
     print()
     print("Starting analysis...")
-    analysis = BaseAnalysis(graphfile, inferredfile)
+    analysis = BaseAnalysis(graph.G, inferred)
     print("correct edges", analysis.edgeCorrect())
     print("missing edges:", analysis.edgeError())
     print("extra edges:", analysis.edgeExtra())
     print("edge number:", analysis.edgeDifference())
     print("degree sequence", analysis.degreeSequence())
     print("degree difference", analysis.nodeDegreeDifference())
+    print("similarity = ", analysis.similarity())
 
     # Make plots, using the dot package to make trees look nice.
     plt.figure(1)
@@ -80,4 +79,4 @@ if __name__ == "__main__":
     # pos = nx.graphviz_layout(analysis.H, prog='dot')
     pos = circlepos(analysis.G)
     nx.draw(analysis.H, pos, with_labels=True)
-    plt.show()
+    # plt.show()

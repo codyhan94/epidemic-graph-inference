@@ -2,6 +2,8 @@ from __future__ import print_function
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
+import numpy as np
+
 # see https://www.cs.cmu.edu/~jingx/docs/DBreport.pdf
 
 
@@ -128,7 +130,7 @@ class BaseAnalysis(object):
 
     def neighborMatching(self, G=None, H=None):
         """ Returns the graph similarity based on Neighbor Matching[Ref]
-        Derived from 'wadsashika'_
+        Derived from 'wadsashika'
 
         :param G: networkx graph of original graph (default: self.G)
         :param H: networkx graph of inferred graph (default: self.H)
@@ -152,7 +154,37 @@ class BaseAnalysis(object):
         gnodes = G.nodes()
         hnodes = H.nodes()
 
-        # TODO
+    def similarity(self, G=None, H=None, iters=1000):
+        """ Returns the graph similarity based on
+
+        :param G: networkx graph of original graph (default: self.G)
+        :param H: networkx graph of inferred graph (default: self.H)
+        :param iter: number of iterations (default: 20)
+        :return: float
+
+        """
+        if G is None:
+            G = self.G
+        if H is None:
+            H = self.H
+
+        n = len(G)
+
+        gA = nx.adjacency_matrix(G)
+        hA = nx.adjacency_matrix(H)
+        s = np.identity(n)   # initial condition
+        for i in range(iters):
+            temp = (np.kron(gA, hA) + np.kron(gA.T, hA.T)) * s + \
+                np.identity(n) * 0.0000001
+            s = temp / np.linalg.norm(temp)
+
+        a = np.trace(s)
+
+        temp = (np.kron(gA, hA) + np.kron(gA.T, hA.T)) * s
+        s = temp / np.linalg.norm(temp)
+
+        a += np.trace(s)
+        return a / 2
 
     def degreeSequence(self, G=None, H=None):
         """ Returns how similar two graphs are by comparing their degree sequence.
@@ -224,8 +256,8 @@ class BaseAnalysis(object):
     #     examples/drawing/degree_histogram.html"""
 
     #     degree_sequence=sorted(nx.degree(G).values(),
-    #                            reverse=True)  # degree sequence
-    #     #print "Degree sequence", degree_sequence
+    # reverse=True)  # degree sequence
+    # print "Degree sequence", degree_sequence
     #     dmax=max(degree_sequence)
 
     #     plt.loglog(degree_sequence,'b-',marker='o')
@@ -233,7 +265,7 @@ class BaseAnalysis(object):
     #     plt.ylabel("degree")
     #     plt.xlabel("rank")
 
-    #     # draw graph in inset
+    # draw graph in inset
     #     plt.axes([0.45,0.45,0.45,0.45])
     #     Gcc=sorted(nx.connected_component_subgraphs(G), key = len, reverse=True)[0]
     #     pos=nx.spring_layout(Gcc)
